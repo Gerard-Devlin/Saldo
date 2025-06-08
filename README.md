@@ -20,8 +20,7 @@
 
 ## 🧠 Powered by LLM: Your AI Financial Analyst
 
-Saldo integrates a cutting-edge large language model (LLM) via Kimi or OpenAI's API to offer *
-*real-time insights** from your transaction history.
+Saldo integrates a cutting-edge large language model (LLM) via Kimi or OpenAI's API to offer **real-time insights** from your transaction history.
 
 💡 Ask questions like:
 
