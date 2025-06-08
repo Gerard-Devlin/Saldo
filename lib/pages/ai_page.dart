@@ -122,88 +122,125 @@ class _AiPageState extends State<AiPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text(
-          " 💰",
-          style: TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1.5,
-            fontFamily: 'cursive',
-            color: Colors.white,
+        title: const Padding(
+          padding: EdgeInsets.only(left: 10, top: 13),
+          child: Text(
+            "🤖",
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.5,
+              fontFamily: 'cursive',
+              color: Colors.white,
+            ),
           ),
         ),
+        centerTitle: false,
+
         backgroundColor: Colors.black,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_forever),
-            color: Colors.white,
-            onPressed: _clearHistory,
+          Padding(
+            padding: const EdgeInsets.only(right: 13, top: 13),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.15),
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.delete_forever),
+                color: Colors.red,
+                onPressed: _clearHistory,
+              ),
+            ),
           ),
         ],
       ),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: _messages.length + (_isLoading ? 1 : 0),
-              itemBuilder: (context, index) {
-                // text
-                if (index < _messages.length) {
-                  final msg = _messages[index];
-                  final isUser = msg['role'] == 'user';
-                  return Container(
-                    alignment: isUser
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.75,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isUser
-                            ? const Color(0xFF323232)
-                            : Colors.grey[800],
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Text(
-                        msg['content'] ?? '',
-                        style: const TextStyle(color: Colors.white),
+            child: _messages.isEmpty
+                ? const Center(
+                    child: Text(
+                      "Anything I can help?",
+                      style: TextStyle(
+                        color: Colors.white38,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Roboto',
+                        // fontStyle: FontStyle.italic,
                       ),
                     ),
-                  );
-                }
-
-                // Loading animation
-                return Container(
-                  alignment: Alignment.centerLeft,
-                  margin: const EdgeInsets.symmetric(vertical: 4),
-                  child: Container(
+                  )
+                : ListView.builder(
                     padding: const EdgeInsets.all(12),
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.75,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[800],
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Text('Typing🙇‍♂️', style: TextStyle(color: Colors.white70)),
-                        SizedBox(width: 6),
-                        LoadingDots(),
-                      ],
-                    ),
+                    itemCount: _messages.length + (_isLoading ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      // text
+                      if (index < _messages.length) {
+                        final msg = _messages[index];
+                        final isUser = msg['role'] == 'user';
+                        return Container(
+                          alignment: isUser
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
+                          margin: const EdgeInsets.symmetric(vertical: 4),
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            constraints: BoxConstraints(
+                              maxWidth:
+                                  MediaQuery.of(context).size.width * 0.75,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isUser
+                                  ? const Color(0xFF2A2A2A)
+                                  : const Color(0xFF333333),
+                              borderRadius: BorderRadius.only(
+                                topLeft: const Radius.circular(18),
+                                topRight: const Radius.circular(18),
+                                bottomLeft: Radius.circular(isUser ? 18 : 0),
+                                bottomRight: Radius.circular(isUser ? 0 : 18),
+                              ),
+                            ),
+
+                            child: Text(
+                              msg['content'] ?? '',
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        );
+                      }
+
+                      // Loading animation
+                      return Container(
+                        alignment: Alignment.centerLeft,
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.75,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[800],
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Text(
+                                'Typing🙇‍♂️',
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                              SizedBox(width: 6),
+                              LoadingDots(),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
 
-          const Divider(height: 1),
+          // const Divider(height: 1),
           Container(
             margin: const EdgeInsets.all(10),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -218,9 +255,16 @@ class _AiPageState extends State<AiPage> {
                     controller: _controller,
                     style: const TextStyle(color: Colors.white),
                     decoration: const InputDecoration.collapsed(
-                      hintText: "Ask anything",
+                      hintText: "Ask anything ...",
                       hintStyle: TextStyle(color: Colors.white54),
                     ),
+                    onSubmitted: (value) {
+                      final text = value.trim();
+                      if (text.isNotEmpty && !_isLoading) {
+                        _sendMessage(text);
+                        _controller.clear();
+                      }
+                    },
                   ),
                 ),
                 IconButton(
@@ -243,7 +287,7 @@ class _AiPageState extends State<AiPage> {
                       color: Colors.white,
                     ),
                     padding: const EdgeInsets.all(8),
-                    child: const Icon(Icons.graphic_eq, color: Colors.black),
+                    child: const Icon(Icons.arrow_upward, color: Colors.black),
                   ),
                 ),
               ],
