@@ -3,6 +3,8 @@
 **Personal Finance + AI Assistant.**
 *Track your money, get insights from AI.*
 
+![Saldo](https://github.com/user-attachments/assets/7cf76765-ea2c-48b5-9177-92ead7df345f)
+
 ------
 
 ## ✨ Features
