@@ -1,4 +1,4 @@
-- ## 💰 Saldo
+- # 💰 Saldo
 
   **Personal Finance + AI Assistant.**
   *Track your money, get insights from AI.*
