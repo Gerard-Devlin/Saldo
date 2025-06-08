@@ -4,7 +4,6 @@ import '../models/transaction.dart' as model;
 import 'add_transaction_page.dart';
 import 'transaction_detail_page.dart';
 
-
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
@@ -26,11 +25,13 @@ class _DashboardPageState extends State<DashboardPage> {
     setState(() => _transactions = txs);
   }
 
-  double get totalIncome =>
-      _transactions.where((t) => t.amount > 0).fold(0.0, (a, b) => a + b.amount);
+  double get totalIncome => _transactions
+      .where((t) => t.amount > 0)
+      .fold(0.0, (a, b) => a + b.amount);
 
-  double get totalExpense =>
-      _transactions.where((t) => t.amount < 0).fold(0.0, (a, b) => a + b.amount.abs());
+  double get totalExpense => _transactions
+      .where((t) => t.amount < 0)
+      .fold(0.0, (a, b) => a + b.amount.abs());
 
   double get balance => totalIncome - totalExpense;
 
@@ -69,101 +70,170 @@ class _DashboardPageState extends State<DashboardPage> {
             const SizedBox(height: 16),
             Row(
               children: [
-                _statCard('TOTAL INCOME', '+\￥${totalIncome.toStringAsFixed(0)}',
-                    Colors.green, Icons.arrow_downward),
+                _statCard(
+                  'TOTAL INCOME',
+                  '+\￥${totalIncome.toStringAsFixed(0)}',
+                  Colors.green,
+                  Icons.arrow_downward,
+                ),
                 const SizedBox(width: 12),
-                _statCard('TOTAL EXPENSE', '-\￥${totalExpense.toStringAsFixed(0)}',
-                    Colors.red, Icons.arrow_upward),
+                _statCard(
+                  'TOTAL EXPENSE',
+                  '-\￥${totalExpense.toStringAsFixed(0)}',
+                  Colors.red,
+                  Icons.arrow_upward,
+                ),
               ],
             ),
             const SizedBox(height: 24),
-            const Text('Recent Transaction',
-                style: TextStyle(fontSize: 16, color: Colors.white)),
+            const Text(
+              'Recent Transaction',
+              style: TextStyle(fontSize: 16, color: Colors.white),
+            ),
             const SizedBox(height: 12),
             Expanded(
               child: _transactions.isEmpty
                   ? const Center(
-                  child: Text('No transactions yet.',
-                      style: TextStyle(color: Colors.grey)))
+                      child: Text(
+                        'No transactions yet.',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
                   : ListView.builder(
-                itemCount: _transactions.length,
-                itemBuilder: (context, index) {
-                  final t = _transactions[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) =>
-                                TransactionDetailPage(transaction: t)),
-                      );
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[900],
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 22,
-                            backgroundColor: Colors.grey[800],
-                            child: Icon(
-                              t.amount > 0
-                                  ? Icons.arrow_downward
-                                  : Icons.arrow_upward,
-                              color: t.amount > 0
-                                  ? Colors.green
-                                  : Colors.red,
+                      itemCount: _transactions.length,
+                      itemBuilder: (context, index) {
+                        final t = _transactions[index];
+                        return Dismissible(
+                          key: Key(t.id.toString()),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.only(right: 20),
+                            alignment: Alignment.centerRight,
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
                             ),
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                Text(t.title,
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16)),
-                                const SizedBox(height: 4),
-                                Text(t.tag,
-                                    style: const TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 13)),
-                              ],
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                '${t.amount > 0 ? '+' : '-'}\￥${t.amount.abs()}',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: t.amount > 0
-                                      ? Colors.green
-                                      : Colors.redAccent,
-                                  fontWeight: FontWeight.w600,
+
+                          confirmDismiss: (direction) async {
+                            return await showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: const Text('Confirm'),
+                                content: const Text(
+                                  'Are you sure you want to delete this transaction?',
                                 ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(ctx).pop(false),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(ctx).pop(true),
+                                    child: const Text('Delete'),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '${t.date.year}-${t.date.month.toString().padLeft(2, '0')}-${t.date.day.toString().padLeft(2, '0')}',
-                                style: const TextStyle(
-                                    color: Colors.grey, fontSize: 12),
+                            );
+                          },
+                          onDismissed: (_) async {
+                            await TransactionDB.instance.delete(t.id!);
+                            setState(() {
+                              _transactions.removeAt(index);
+                            });
+                          },
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      TransactionDetailPage(transaction: t),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[900],
+                                borderRadius: BorderRadius.circular(16),
                               ),
-                            ],
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 22,
+                                    backgroundColor: Colors.grey[800],
+                                    child: Icon(
+                                      t.amount > 0
+                                          ? Icons.arrow_downward
+                                          : Icons.arrow_upward,
+                                      color: t.amount > 0
+                                          ? Colors.green
+                                          : Colors.red,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          t.title,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          t.tag,
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        '${t.amount > 0 ? '+' : '-'}￥${t.amount.abs()}',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: t.amount > 0
+                                              ? Colors.green
+                                              : Colors.redAccent,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '${t.date.year}-${t.date.month.toString().padLeft(2, '0')}-${t.date.day.toString().padLeft(2, '0')}',
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
@@ -205,8 +275,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _statCard(
-      String label, String value, Color color, IconData icon) {
+  Widget _statCard(String label, String value, Color color, IconData icon) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -227,9 +296,14 @@ class _DashboardPageState extends State<DashboardPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label,
-                    style: const TextStyle(
-                        fontSize: 12, color: Colors.grey, height: 2)),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                    height: 2,
+                  ),
+                ),
                 Text(
                   value,
                   style: TextStyle(

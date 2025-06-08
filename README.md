@@ -10,6 +10,7 @@
 - 📊 Automatically calculate and display total income and expenses
 - 💾 Offline-first: all data stored locally with `sqflite`
 - 💴 Currency display in Chinese Yuan (￥)
+- 🤖 **AI-powered analysis**: Use a large language model (LLM) to generate insights and summaries from your financial history (Kimi, OpenAI compatible)
 
 ------
 
