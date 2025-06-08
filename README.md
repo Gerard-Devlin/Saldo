@@ -26,7 +26,9 @@
   💡 Ask questions like:
 
   > *"What categories did I overspend on last month?"*
+  > 
   > *"Summarize my income trend over the past 3 months."*
+  > 
   > *"Do I have a food delivery problem?"*
 
   📦 Your data never leaves your device without your permission. All analysis is done securely
