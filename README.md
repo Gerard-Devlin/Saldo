@@ -1,34 +1,36 @@
 - ## 💰 Saldo
 
   **Personal Finance + AI Assistant.**
-   *Track your money, get insights from AI.*
+  *Track your money, get insights from AI.*
 
   ------
 
   ## ✨ Features
 
-  - 📆 Add, edit, and delete income or expense transactions
-  - 📊 Instantly calculate and visualize total income & spending
-  - 💾 Offline-first: all data stored locally (no login required)
-  - 💴 Currency support for Chinese Yuan (￥)
-  - 🤖 **AI Assistant**: Ask your finances anything – powered by Kimi/GPT
-    - Summarize monthly spending habits
-    - Get budgeting suggestions based on your real data
-    - Talk to your financial history like a chatbot!
+    - 📆 Add, edit, and delete income or expense transactions
+    - 📊 Instantly calculate and visualize total income & spending
+    - 💾 Offline-first: all data stored locally (no login required)
+    - 💴 Currency support for Chinese Yuan (￥)
+    - 🤖 **AI Assistant**: Ask your finances anything – powered by Kimi/GPT
+        - Summarize monthly spending habits
+        - Get budgeting suggestions based on your real data
+        - Talk to your financial history like a chatbot!
 
   ------
 
   ## 🧠 Powered by LLM: Your AI Financial Analyst
 
-  Saldo integrates a cutting-edge large language model (LLM) via Kimi or OpenAI's API to offer **real-time insights** from your transaction history.
+  Saldo integrates a cutting-edge large language model (LLM) via Kimi or OpenAI's API to offer *
+  *real-time insights** from your transaction history.
 
   💡 Ask questions like:
 
   > *"What categories did I overspend on last month?"*
-  >  *"Summarize my income trend over the past 3 months."*
-  >  *"Do I have a food delivery problem?"*
+  > *"Summarize my income trend over the past 3 months."*
+  > *"Do I have a food delivery problem?"*
 
-  📦 Your data never leaves your device without your permission. All analysis is done securely through encrypted API requests.
+  📦 Your data never leaves your device without your permission. All analysis is done securely
+  through encrypted API requests.
 
 ------
 
@@ -84,13 +86,12 @@ dev_dependencies:
 - ⏳ Budget tracking and alerts
 - ⏳ Multi-currency support
 
-
 ------
 
 ## 🤝 Acknowledgements
 
 Developed with 💖 using Flutter and open-source packages.
- Special thanks to the Flutter community for documentation, tools, and inspiration.
+Special thanks to the Flutter community for documentation, tools, and inspiration.
 
 ------
 
