@@ -63,14 +63,17 @@ class _MePageState extends State<MePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text(
-          'Detail',
-          style: TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1.5,
-            fontFamily: 'cursive',
-            color: Colors.white,
+        title: const Padding(
+          padding: EdgeInsets.only(left: 10, top: 13),
+          child: Text(
+            "✒️",
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.5,
+              fontFamily: 'cursive',
+              color: Colors.white,
+            ),
           ),
         ),
         backgroundColor: Colors.black,
@@ -251,7 +254,7 @@ class _MePageState extends State<MePage> {
             style: const TextStyle(color: Colors.white70, fontSize: 14),
           ),
           Text(
-            '\$${amount.toStringAsFixed(2)}',
+            '\￥${amount.toStringAsFixed(2)}',
             style: TextStyle(color: color, fontSize: 16),
           ),
         ],

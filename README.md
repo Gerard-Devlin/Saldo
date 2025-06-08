@@ -1,16 +1,34 @@
-# 💰 Saldo
+- ## 💰 Saldo
 
-**Saldo** is a minimalist and modern expense tracking app built with Flutter. It enables users to manage personal finances by adding, editing, and reviewing income and expense transactions. Featuring offline-first functionality, Material 3 theming, and Chinese Yuan currency display, Saldo is designed for mobile users who prefer simplicity and privacy.
+  **Personal Finance + AI Assistant.**
+   *Track your money, get insights from AI.*
 
-------
+  ------
 
-## ✨ Features
+  ## ✨ Features
 
-- 📆 Add, edit, and delete income or expense transactions
-- 📊 Automatically calculate and display total income and expenses
-- 💾 Offline-first: all data stored locally with `sqflite`
-- 💴 Currency display in Chinese Yuan (￥)
-- 🤖 **AI-powered analysis**: Use a large language model (LLM) to generate insights and summaries from your financial history (Kimi, OpenAI compatible)
+  - 📆 Add, edit, and delete income or expense transactions
+  - 📊 Instantly calculate and visualize total income & spending
+  - 💾 Offline-first: all data stored locally (no login required)
+  - 💴 Currency support for Chinese Yuan (￥)
+  - 🤖 **AI Assistant**: Ask your finances anything – powered by Kimi/GPT
+    - Summarize monthly spending habits
+    - Get budgeting suggestions based on your real data
+    - Talk to your financial history like a chatbot!
+
+  ------
+
+  ## 🧠 Powered by LLM: Your AI Financial Analyst
+
+  Saldo integrates a cutting-edge large language model (LLM) via Kimi or OpenAI's API to offer **real-time insights** from your transaction history.
+
+  💡 Ask questions like:
+
+  > *"What categories did I overspend on last month?"*
+  >  *"Summarize my income trend over the past 3 months."*
+  >  *"Do I have a food delivery problem?"*
+
+  📦 Your data never leaves your device without your permission. All analysis is done securely through encrypted API requests.
 
 ------
 
