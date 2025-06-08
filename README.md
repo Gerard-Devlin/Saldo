@@ -7,14 +7,14 @@
 
 ## ✨ Features
 
-    - 📆 Add, edit, and delete income or expense transactions
-    - 📊 Instantly calculate and visualize total income & spending
-    - 💾 Offline-first: all data stored locally (no login required)
-    - 💴 Currency support for Chinese Yuan (￥)
-    - 🤖 **AI Assistant**: Ask your finances anything – powered by Kimi/GPT
-        - Summarize monthly spending habits
-        - Get budgeting suggestions based on your real data
-        - Talk to your financial history like a chatbot!
+- 📆 Add, edit, and delete income or expense transactions
+- 📊 Instantly calculate and visualize total income & spending
+- 💾 Offline-first: all data stored locally (no login required)
+- 💴 Currency support for Chinese Yuan (￥)
+- 🤖 **AI Assistant**: Ask your finances anything – powered by Kimi/GPT
+    - Summarize monthly spending habits
+    - Get budgeting suggestions based on your real data
+    - Talk to your financial history like a chatbot!
 
 ------
 
