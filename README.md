@@ -1,11 +1,11 @@
-- # 💰 Saldo
+# 💰 Saldo
 
-  **Personal Finance + AI Assistant.**
-  *Track your money, get insights from AI.*
+**Personal Finance + AI Assistant.**
+*Track your money, get insights from AI.*
 
-  ------
+------
 
-  ## ✨ Features
+## ✨ Features
 
     - 📆 Add, edit, and delete income or expense transactions
     - 📊 Instantly calculate and visualize total income & spending
@@ -16,23 +16,23 @@
         - Get budgeting suggestions based on your real data
         - Talk to your financial history like a chatbot!
 
-  ------
+------
 
-  ## 🧠 Powered by LLM: Your AI Financial Analyst
+## 🧠 Powered by LLM: Your AI Financial Analyst
 
-  Saldo integrates a cutting-edge large language model (LLM) via Kimi or OpenAI's API to offer *
-  *real-time insights** from your transaction history.
+Saldo integrates a cutting-edge large language model (LLM) via Kimi or OpenAI's API to offer *
+*real-time insights** from your transaction history.
 
-  💡 Ask questions like:
+💡 Ask questions like:
 
-  > *"What categories did I overspend on last month?"*
-  > 
-  > *"Summarize my income trend over the past 3 months."*
-  > 
-  > *"Do I have a food delivery problem?"*
+> *"What categories did I overspend on last month?"*
+>
+> *"Summarize my income trend over the past 3 months."*
+>
+> *"Do I have a food delivery problem?"*
 
-  📦 Your data never leaves your device without your permission. All analysis is done securely
-  through encrypted API requests.
+📦 Your data never leaves your device without your permission. All analysis is done securely
+through encrypted API requests.
 
 ------
 
@@ -82,8 +82,8 @@ dev_dependencies:
 
 ## 📈 Planned Features
 
-- ✅ Dark/Light mode support
-- ⏳ Monthly expense/income charts and summaries
+- ⏳ Dark/Light mode support
+- ✅ Monthly expense/income charts and summaries
 - ⏳ Export transactions as CSV
 - ⏳ Budget tracking and alerts
 - ⏳ Multi-currency support
