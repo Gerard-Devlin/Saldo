@@ -39,8 +39,7 @@ class TransactionDB {
         amount REAL,
         date TEXT,
         type TEXT,
-        tag TEXT,
-        note TEXT
+        account TEXT
       )
     ''');
   }
@@ -58,7 +57,6 @@ class TransactionDB {
 
   Future<void> delete(int id) async {
     final db = await instance.database;
-
     await db.delete('transactions', where: 'id = ?', whereArgs: [id]);
   }
 

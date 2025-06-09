@@ -13,6 +13,9 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   List<model.Transaction> _transactions = [];
+  String _sortOption = 'Time Desc';
+  bool _isMultiSelectMode = false;
+  Set<int> _selectedIds = {};
 
   @override
   void initState() {
@@ -23,6 +26,22 @@ class _DashboardPageState extends State<DashboardPage> {
   Future<void> _loadTransactions() async {
     final txs = await TransactionDB.instance.readAll();
     setState(() => _transactions = txs);
+  }
+
+  List<model.Transaction> _getSortedTransactions() {
+    List<model.Transaction> sorted = [..._transactions];
+    switch (_sortOption) {
+      case 'Amount Asc':
+        sorted.sort((a, b) => a.amount.abs().compareTo(b.amount.abs()));
+        break;
+      case 'Amount Desc':
+        sorted.sort((a, b) => b.amount.abs().compareTo(a.amount.abs()));
+        break;
+      case 'Time Desc':
+      default:
+        sorted.sort((a, b) => b.date.compareTo(a.date));
+    }
+    return sorted;
   }
 
   double get totalIncome => _transactions
@@ -40,7 +59,38 @@ class _DashboardPageState extends State<DashboardPage> {
       context,
       MaterialPageRoute(builder: (_) => const AddTransactionPage()),
     );
-    _loadTransactions(); // 添加交易后刷新
+    _loadTransactions();
+  }
+
+  void _confirmDeleteSelected() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Confirm'),
+        content: Text('Delete ${_selectedIds.length} selected transactions?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      for (var id in _selectedIds) {
+        await TransactionDB.instance.delete(id);
+      }
+      setState(() {
+        _transactions.removeWhere((t) => _selectedIds.contains(t.id));
+        _selectedIds.clear();
+        _isMultiSelectMode = false;
+      });
+    }
   }
 
   @override
@@ -60,6 +110,19 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
         backgroundColor: Colors.black,
         elevation: 0,
+        actions: _isMultiSelectMode
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    setState(() {
+                      _selectedIds.clear();
+                      _isMultiSelectMode = false;
+                    });
+                  },
+                ),
+              ]
+            : null,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -72,177 +135,238 @@ class _DashboardPageState extends State<DashboardPage> {
               children: [
                 _statCard(
                   'TOTAL INCOME',
-                  '+\￥${totalIncome.toStringAsFixed(0)}',
+                  '+￥${totalIncome.toStringAsFixed(0)}',
                   Colors.green,
-                  Icons.arrow_downward,
+                  Icons.arrow_upward,
                 ),
                 const SizedBox(width: 12),
                 _statCard(
                   'TOTAL EXPENSE',
-                  '-\￥${totalExpense.toStringAsFixed(0)}',
+                  '-￥${totalExpense.toStringAsFixed(0)}',
                   Colors.red,
-                  Icons.arrow_upward,
+                  Icons.arrow_downward,
                 ),
               ],
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Recent Transaction',
-              style: TextStyle(fontSize: 16, color: Colors.white),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Recent Transactions',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                DropdownButton<String>(
+                  dropdownColor: Colors.grey[850],
+                  value: _sortOption,
+                  style: const TextStyle(color: Colors.white),
+                  underline: const SizedBox(),
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'Time Desc',
+                      child: Text('   📅 Time'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Amount Asc',
+                      child: Text('   ⬆️ Amount'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Amount Desc',
+                      child: Text('   ⬇️ Amount'),
+                    ),
+                  ],
+                  onChanged: (value) => setState(() => _sortOption = value!),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
-            Expanded(
-              child: _transactions.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'No transactions yet.',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: _transactions.length,
-                      itemBuilder: (context, index) {
-                        final t = _transactions[index];
-                        return Dismissible(
-                          key: Key(t.id.toString()),
-                          direction: DismissDirection.endToStart,
-                          background: Container(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            padding: const EdgeInsets.only(right: 20),
-                            alignment: Alignment.centerRight,
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: const Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ),
-                          ),
-
-                          confirmDismiss: (direction) async {
-                            return await showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                title: const Text('Confirm'),
-                                content: const Text(
-                                  'Are you sure you want to delete this transaction?',
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(ctx).pop(false),
-                                    child: const Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(ctx).pop(true),
-                                    child: const Text('Delete'),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          onDismissed: (_) async {
-                            await TransactionDB.instance.delete(t.id!);
-                            setState(() {
-                              _transactions.removeAt(index);
-                            });
-                          },
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      TransactionDetailPage(transaction: t),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[900],
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 22,
-                                    backgroundColor: Colors.grey[800],
-                                    child: Icon(
-                                      t.amount > 0
-                                          ? Icons.arrow_downward
-                                          : Icons.arrow_upward,
-                                      color: t.amount > 0
-                                          ? Colors.green
-                                          : Colors.red,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          t.title,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          t.tag,
-                                          style: const TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 13,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        '${t.amount > 0 ? '+' : '-'}￥${t.amount.abs()}',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: t.amount > 0
-                                              ? Colors.green
-                                              : Colors.redAccent,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        '${t.date.year}-${t.date.month.toString().padLeft(2, '0')}-${t.date.day.toString().padLeft(2, '0')}',
-                                        style: const TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
+            Expanded(child: _buildTransactionList(_getSortedTransactions())),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blueAccent,
-        child: const Icon(Icons.add),
-        onPressed: _navigateToAddTransaction,
-      ),
+      floatingActionButton: _isMultiSelectMode
+          ? FloatingActionButton.extended(
+              backgroundColor: Colors.red,
+              icon: const Icon(Icons.delete),
+              label: Text('Delete (${_selectedIds.length})'),
+              onPressed: _confirmDeleteSelected,
+            )
+          : FloatingActionButton(
+              backgroundColor: Colors.blueAccent,
+              child: const Icon(Icons.add),
+              onPressed: _navigateToAddTransaction,
+            ),
+    );
+  }
+
+  Widget _buildTransactionList(List<model.Transaction> txs) {
+    if (txs.isEmpty) {
+      return const Center(
+        child: Text(
+          'No transactions yet.',
+          style: TextStyle(color: Colors.grey),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: txs.length,
+      itemBuilder: (context, index) {
+        final t = txs[index];
+        return Dismissible(
+          key: Key(t.id.toString()),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.only(right: 20),
+            alignment: Alignment.centerRight,
+            decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Icon(Icons.delete, color: Colors.white),
+          ),
+          confirmDismiss: (direction) async {
+            return await showDialog(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: const Text('Confirm'),
+                content: const Text(
+                  'Are you sure you want to delete this transaction?',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(false),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    child: const Text('Delete'),
+                  ),
+                ],
+              ),
+            );
+          },
+          onDismissed: (_) async {
+            await TransactionDB.instance.delete(t.id!);
+            setState(() {
+              _transactions.removeWhere((tx) => tx.id == t.id);
+            });
+          },
+          child: GestureDetector(
+            onLongPress: () {
+              setState(() {
+                _isMultiSelectMode = true;
+                _selectedIds.add(t.id!);
+              });
+            },
+            onTap: () {
+              if (_isMultiSelectMode) {
+                setState(() {
+                  if (_selectedIds.contains(t.id)) {
+                    _selectedIds.remove(t.id);
+                    if (_selectedIds.isEmpty) _isMultiSelectMode = false;
+                  } else {
+                    _selectedIds.add(t.id!);
+                  }
+                });
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => TransactionDetailPage(transaction: t),
+                  ),
+                );
+              }
+            },
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey[900],
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                children: [
+                  _isMultiSelectMode
+                      ? Checkbox(
+                          value: _selectedIds.contains(t.id),
+                          onChanged: (checked) {
+                            setState(() {
+                              if (checked == true) {
+                                _selectedIds.add(t.id!);
+                              } else {
+                                _selectedIds.remove(t.id);
+                                if (_selectedIds.isEmpty)
+                                  _isMultiSelectMode = false;
+                              }
+                            });
+                          },
+                        )
+                      : CircleAvatar(
+                          radius: 22,
+                          backgroundColor: Colors.grey[800],
+                          child: Icon(
+                            t.amount > 0
+                                ? Icons.arrow_upward
+                                : Icons.arrow_downward,
+                            color: t.amount > 0 ? Colors.green : Colors.red,
+                          ),
+                        ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          t.title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          t.account,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '${t.amount > 0 ? '+' : '-'}￥${t.amount.abs()}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: t.amount > 0 ? Colors.green : Colors.redAccent,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${t.date.year}-${t.date.month.toString().padLeft(2, '0')}-${t.date.day.toString().padLeft(2, '0')}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -263,7 +387,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            '\￥${balance.toStringAsFixed(0)}',
+            '￥${balance.toStringAsFixed(0)}',
             style: const TextStyle(
               fontSize: 28,
               color: Colors.white,

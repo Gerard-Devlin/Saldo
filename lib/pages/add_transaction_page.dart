@@ -4,6 +4,7 @@ import '../database/transaction_db.dart';
 
 class AddTransactionPage extends StatefulWidget {
   final model.Transaction? transaction;
+
   const AddTransactionPage({super.key, this.transaction});
 
   @override
@@ -15,6 +16,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   String _title = '';
   double _amount = 0;
   String _type = 'Income';
+  String _account = 'Alipay';
   DateTime _selectedDate = DateTime.now();
 
   final _titleController = TextEditingController();
@@ -29,6 +31,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       _amount = t.amount.abs();
       _type = t.amount >= 0 ? 'Income' : 'Expense';
       _selectedDate = t.date;
+      _account = t.account;
       _titleController.text = t.title;
       _amountController.text = t.amount.abs().toString();
     }
@@ -51,8 +54,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         amount: _type == 'Income' ? _amount : -_amount,
         date: _selectedDate,
         type: _type,
-        tag: '-',
-        note: '-',
+        account: _account,
       );
 
       if (widget.transaction == null) {
@@ -72,9 +74,14 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.grey[900],
-        title: const Text('Confirm Deletion', style: TextStyle(color: Colors.white)),
-        content: const Text('Are you sure you want to delete this transaction?',
-            style: TextStyle(color: Colors.white70)),
+        title: const Text(
+          'Confirm Deletion',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: const Text(
+          'Are you sure you want to delete this transaction?',
+          style: TextStyle(color: Colors.white70),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -82,7 +89,10 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete', style: TextStyle(color: Colors.redAccent)),
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: Colors.redAccent),
+            ),
           ),
         ],
       ),
@@ -128,7 +138,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text(widget.transaction == null ? 'New Transaction' : 'Edit Transaction'),
+        title: Text(
+          widget.transaction == null ? 'New Transaction' : 'Edit Transaction',
+        ),
         backgroundColor: Colors.black,
         elevation: 0,
       ),
@@ -141,10 +153,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               const SizedBox(height: 8),
               Text(
                 'Fill in transaction info',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(color: color.onBackground),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(color: color.onBackground),
               ),
               const SizedBox(height: 16),
 
@@ -154,7 +165,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 hintText: 'e.g. Grocery, Salary...',
                 icon: Icons.description,
                 validator: (val) =>
-                val == null || val.trim().isEmpty ? 'Enter a title' : null,
+                    val == null || val.trim().isEmpty ? 'Enter a title' : null,
                 onSaved: (val) => _title = val!.trim(),
               ),
 
@@ -173,7 +184,31 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   return null;
                 },
                 onSaved: (val) =>
-                _amount = double.tryParse(val ?? '0')?.abs() ?? 0,
+                    _amount = double.tryParse(val ?? '0')?.abs() ?? 0,
+              ),
+
+              const SizedBox(height: 16),
+              _buildSectionLabel('Account'),
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E1E1E),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: DropdownButtonFormField<String>(
+                  value: _account,
+                  icon: const Icon(Icons.arrow_drop_down),
+                  dropdownColor: const Color(0xFF1E1E1E),
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  items: const [
+                    DropdownMenuItem(value: 'Alipay', child: Text('Alipay')),
+                    DropdownMenuItem(value: 'WeChat', child: Text('WeChat')),
+                  ],
+                  onChanged: (val) =>
+                      setState(() => _account = val ?? 'Alipay'),
+                  onSaved: (val) => _account = val ?? 'Alipay',
+                ),
               ),
 
               const SizedBox(height: 16),
@@ -181,7 +216,10 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               GestureDetector(
                 onTap: _pickDate,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 16,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF1E1E1E),
                     borderRadius: BorderRadius.circular(14),
@@ -191,7 +229,10 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.calendar_today, color: Colors.white54),
+                          const Icon(
+                            Icons.calendar_today,
+                            color: Colors.white54,
+                          ),
                           const SizedBox(width: 12),
                           Text(
                             '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}',
@@ -231,7 +272,11 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               ElevatedButton.icon(
                 onPressed: _submitForm,
                 icon: Icon(widget.transaction == null ? Icons.add : Icons.save),
-                label: Text(widget.transaction == null ? 'Add Transaction' : 'Update Transaction'),
+                label: Text(
+                  widget.transaction == null
+                      ? 'Add Transaction'
+                      : 'Update Transaction',
+                ),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   backgroundColor: Colors.blueAccent,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../database/transaction_db.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../models/transaction.dart' as model;
 
 class AiPage extends StatefulWidget {
@@ -61,7 +62,7 @@ class _AiPageState extends State<AiPage> {
     final summary = transactions
         .map(
           (t) =>
-              "Date: ${t.date}, Title: ${t.title}, Amount: ${t.amount}, Tag: ${t.tag}",
+              "Date: ${t.date}, Title: ${t.title}, Amount: ${t.amount}, Tag: ${t.account}",
         )
         .join("\n");
     return summary;
@@ -202,9 +203,17 @@ class _AiPageState extends State<AiPage> {
                               ),
                             ),
 
-                            child: Text(
-                              msg['content'] ?? '',
-                              style: const TextStyle(color: Colors.white),
+                            child: MarkdownBody(
+                              data: msg['content'] ?? '',
+                              styleSheet: MarkdownStyleSheet(
+                                p: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                                code: const TextStyle(
+                                  color: Colors.orangeAccent,
+                                ),
+                              ),
                             ),
                           ),
                         );

@@ -12,9 +12,7 @@ class TransactionDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isIncome = transaction.amount >= 0;
-    final colorScheme = Theme
-        .of(context)
-        .colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -26,57 +24,77 @@ class TransactionDetailPage extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             _highlightCard(transaction.title, isIncome),
-        const SizedBox(height: 24),
-        _infoCard(
-          icon: Icons.attach_money,
-          title: 'Amount',
-          content:
-          '${isIncome ? '+' : '-'}\￥${transaction.amount.abs().toStringAsFixed(
-              2)}',
-          iconColor: isIncome ? Colors.green : Colors.red,
-          contentColor: isIncome ? Colors.greenAccent : Colors.redAccent,
-        ),
-        _infoCard(
-          icon: Icons.calendar_today,
-          title: 'Date',
-          content: DateFormat('yyyy-MM-dd – HH:mm').format(transaction.date),
-          iconColor: Colors.orange,
-        ),
-        const SizedBox(height: 32),
-        Center(
-          child: FilledButton.icon(
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => AddTransactionPage(transaction: transaction),
+            const SizedBox(height: 24),
+            _infoCard(
+              icon: Icons.attach_money,
+              title: 'Amount',
+              content:
+                  '${isIncome ? '+' : '-'}\￥${transaction.amount.abs().toStringAsFixed(2)}',
+              iconColor: isIncome ? Colors.green : Colors.red,
+              contentColor: isIncome ? Colors.greenAccent : Colors.redAccent,
+            ),
+
+            _infoCard(
+              icon: transaction.account == 'WeChat'
+                  ? Icons.wechat
+                  : Icons.account_balance_wallet,
+              title: 'Account',
+              content: transaction.account,
+              iconColor: transaction.account == 'WeChat'
+                  ? Colors.green
+                  : Colors.blueAccent,
+            ),
+
+            _infoCard(
+              icon: Icons.calendar_today,
+              title: 'Date',
+              content: DateFormat(
+                'yyyy-MM-dd',
+              ).format(transaction.date),
+              iconColor: Colors.orange,
+            ),
+            const SizedBox(height: 32),
+            Center(
+              child: FilledButton.icon(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          AddTransactionPage(transaction: transaction),
+                    ),
+                  );
+                  if (context.mounted) Navigator.pop(context);
+                },
+                icon: const Icon(Icons.edit),
+                label: const Text('Edit Transaction'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.secondaryContainer,
+                  foregroundColor: Theme.of(
+                    context,
+                  ).colorScheme.onSecondaryContainer,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              );
-              if (context.mounted) Navigator.pop(context);
-            },
-            icon: const Icon(Icons.edit),
-            label: const Text('Edit Transaction'),
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-              foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              textStyle: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-
+          ],
         ),
-      ],
-    ),)
-    ,
+      ),
     );
   }
 
@@ -85,7 +103,7 @@ class TransactionDetailPage extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(200),
       ),
       child: Row(
         children: [
@@ -93,8 +111,9 @@ class TransactionDetailPage extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isIncome ? Colors.green.withOpacity(0.2) : Colors.red
-                  .withOpacity(0.2),
+              color: isIncome
+                  ? Colors.green.withOpacity(0.2)
+                  : Colors.red.withOpacity(0.2),
             ),
             child: Icon(
               Icons.description,
