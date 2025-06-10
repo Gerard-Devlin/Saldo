@@ -218,7 +218,7 @@ class _AiPageState extends State<AiPage> {
       appBar: AppBar(
         scrolledUnderElevation: 0,
         title: const Padding(
-          padding: EdgeInsets.only(left: 10, top: 13),
+          padding: EdgeInsets.only(left: 10, top: 15),
           child: Text(
             "🤖",
             style: TextStyle(
@@ -234,7 +234,7 @@ class _AiPageState extends State<AiPage> {
         backgroundColor: Colors.black,
         actions: [
           Padding(
-            padding: const EdgeInsets.only(top: 13, right: 13),
+            padding: const EdgeInsets.only(top: 15, right: 13),
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.red.withOpacity(0.15),
@@ -257,7 +257,7 @@ class _AiPageState extends State<AiPage> {
                 child: _messages.isEmpty
                     ? const Center(
                         child: Text(
-                          "Anything I can help?",
+                          "Hey, ready to dive in?",
                           style: TextStyle(
                             color: Colors.white38,
                             fontSize: 30,
@@ -358,12 +358,12 @@ class _AiPageState extends State<AiPage> {
                         },
                       ),
               ),
-              // 输入框区域
+
               Container(
                 margin: const EdgeInsets.all(10),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
-                  vertical: 8,
+                  vertical: 6,
                 ),
                 decoration: BoxDecoration(
                   color: Colors.grey[900],

@@ -96,9 +96,9 @@ class _DetailPageState extends State<DetailPage> {
       appBar: AppBar(
         scrolledUnderElevation: 0,
         title: const Padding(
-          padding: EdgeInsets.only(left: 10, top: 13),
+          padding: EdgeInsets.only(left: 10, top: 15),
           child: Text(
-            "✒️",
+            "📊",
             style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.w800,
