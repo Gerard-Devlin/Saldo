@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../models/transaction.dart';
 import 'package:intl/intl.dart';
 
@@ -40,7 +41,7 @@ class TransactionDetailPage extends StatelessWidget {
             _infoCard(
               icon: transaction.account == 'WeChat'
                   ? Icons.wechat
-                  : Icons.account_balance_wallet,
+                  : FontAwesomeIcons.alipay,
               title: 'Account',
               content: transaction.account,
               iconColor: transaction.account == 'WeChat'

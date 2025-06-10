@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import '../models/transaction.dart' as model;
 import '../database/transaction_db.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DetailPage extends StatefulWidget {
@@ -25,8 +26,17 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Future<void> _loadTransactions() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedYear = prefs.getInt('selected_year');
+    final savedMonth = prefs.getInt('selected_month');
+
     final txs = await TransactionDB.instance.readAll();
-    setState(() => _transactions = txs);
+
+    setState(() {
+      _selectedYear = savedYear ?? DateTime.now().year;
+      _selectedMonth = savedMonth ?? DateTime.now().month;
+      _transactions = txs;
+    });
   }
 
   double get totalIncome => _transactions
@@ -84,6 +94,7 @@ class _DetailPageState extends State<DetailPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Padding(
           padding: EdgeInsets.only(left: 10, top: 13),
           child: Text(
@@ -132,9 +143,13 @@ class _DetailPageState extends State<DetailPage> {
                             ),
                           )
                           .toList(),
-                      onChanged: (val) => setState(
-                        () => _selectedMonth = val ?? _selectedMonth,
-                      ),
+                      onChanged: (val) async {
+                        if (val != null) {
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setInt('selected_month', val);
+                          setState(() => _selectedMonth = val);
+                        }
+                      },
                     ),
                     const SizedBox(width: 12),
                     DropdownButton<int>(
@@ -150,8 +165,13 @@ class _DetailPageState extends State<DetailPage> {
                             ),
                           )
                           .toList(),
-                      onChanged: (val) =>
-                          setState(() => _selectedYear = val ?? _selectedYear),
+                      onChanged: (val) async {
+                        if (val != null) {
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setInt('selected_year', val);
+                          setState(() => _selectedYear = val);
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -200,7 +220,7 @@ class _DetailPageState extends State<DetailPage> {
             children: [
               Icon(
                 icon,
-                size: 35,
+                size: 40,
                 color: label == 'WeChat'
                     ? const Color(0xFF07C160)
                     : const Color(0xFF1677FF),
@@ -242,9 +262,11 @@ class _DetailPageState extends State<DetailPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Monthly Overview',
+            '📅  Monthly Overview',
             style: TextStyle(color: Colors.white70),
           ),
+
+          const SizedBox(height: 8),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -256,12 +278,12 @@ class _DetailPageState extends State<DetailPage> {
             ),
             itemBuilder: (context, index) {
               if (index < firstWeekday - 1) return const SizedBox();
-              final day = index - (firstWeekday - 2);
+
+              final day = index - (firstWeekday - 1) + 1;
               final amount = dailyExpenses[day] ?? 0;
-              final ratio = sqrt(amount / maxExpense).clamp(0.0, 1.0);
-              final color = amount == 0
-                  ? Colors.grey[850]
-                  : Color.lerp(Colors.green[300], Colors.red[800], ratio);
+
+              final color = _colorForAmount(amount);
+
               return Container(
                 decoration: BoxDecoration(
                   color: color,
@@ -306,7 +328,10 @@ class _DetailPageState extends State<DetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Year Overview', style: TextStyle(color: Colors.white70)),
+          const Text(
+            '💴  Yearly Overview',
+            style: TextStyle(color: Colors.white70),
+          ),
           const SizedBox(height: 12),
           AspectRatio(
             aspectRatio: 1.8,
@@ -417,5 +442,25 @@ class _DetailPageState extends State<DetailPage> {
         ],
       ),
     );
+  }
+}
+
+Color _colorForAmount(double amount) {
+  if (amount <= 0) return Colors.grey[850]!;
+
+  if (amount <= 500) {
+    final t = amount / 500;
+    return Color.lerp(Colors.green[100], Colors.green[300], t)!;
+  } else if (amount <= 2000) {
+    final t = (amount - 500) / 1500;
+    return Color.lerp(Colors.green[300], Colors.green[500], t)!;
+  } else if (amount <= 5000) {
+    final t = (amount - 2000) / 3000;
+    return Color.lerp(Colors.green[500], Colors.green[700], t)!;
+  } else if (amount <= 10000) {
+    final t = (amount - 5000) / 5000;
+    return Color.lerp(Colors.green[700], Colors.green[900], t)!;
+  } else {
+    return Colors.green[900]!;
   }
 }
