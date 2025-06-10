@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../database/transaction_db.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_math_fork/flutter_math.dart';
 import '../models/transaction.dart' as model;
 
 class AiPage extends StatefulWidget {
@@ -21,6 +22,66 @@ class _AiPageState extends State<AiPage> {
   final List<Map<String, String>> _messages = [];
   bool _isLoading = false;
   final String _apiKey = "sk-2t6V95UUvZwvSfqEOM6twl0koCfuhtliNYdpoKULY3chPwNF";
+
+  Widget _renderMixedMarkdownAndMath(String content) {
+    final regex = RegExp(r'\\\[(.*?)\\\]', dotAll: true); // 匹配 \[...\]
+    final matches = regex.allMatches(content);
+
+    final safeTheme = ThemeData.dark().copyWith(
+      textTheme: const TextTheme(bodyMedium: TextStyle(fontSize: 14)),
+    );
+
+    if (matches.isEmpty) {
+      return MarkdownBody(
+        data: content,
+        styleSheet: MarkdownStyleSheet(
+          p: const TextStyle(color: Colors.white, fontSize: 14, height: 1.5),
+          code: const TextStyle(color: Colors.orangeAccent),
+        ),
+      );
+    }
+
+    final spans = <InlineSpan>[];
+    int lastIndex = 0;
+
+    for (final match in matches) {
+      if (match.start > lastIndex) {
+        spans.add(
+          WidgetSpan(
+            child: MarkdownBody(
+              data: content.substring(lastIndex, match.start),
+              styleSheet: MarkdownStyleSheet.fromTheme(safeTheme),
+            ),
+          ),
+        );
+      }
+
+      final texString = match.group(1)?.trim() ?? '';
+      spans.add(
+        WidgetSpan(
+          child: Math.tex(
+            texString,
+            textStyle: const TextStyle(color: Colors.white, fontSize: 14),
+          ),
+        ),
+      );
+
+      lastIndex = match.end;
+    }
+
+    if (lastIndex < content.length) {
+      spans.add(
+        WidgetSpan(
+          child: MarkdownBody(
+            data: content.substring(lastIndex),
+            styleSheet: MarkdownStyleSheet.fromTheme(safeTheme),
+          ),
+        ),
+      );
+    }
+
+    return RichText(text: TextSpan(children: spans));
+  }
 
   @override
   void initState() {
@@ -64,7 +125,7 @@ class _AiPageState extends State<AiPage> {
 
   Future<void> _clearHistory() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('ai_chat_history');
+    await prefs.setString('ai_chat_history', json.encode([]));
     setState(() {
       _messages.clear();
     });
@@ -75,7 +136,7 @@ class _AiPageState extends State<AiPage> {
     final summary = transactions
         .map(
           (t) =>
-              "Date: ${t.date}, Title: ${t.title}, Amount: ${t.amount}, Tag: ${t.account}",
+              "Date: ${t.date}, Title: ${t.title}, Amount: ${t.amount}, Account: ${t.account}",
         )
         .join("\n");
     return summary;
@@ -200,7 +261,7 @@ class _AiPageState extends State<AiPage> {
                           style: TextStyle(
                             color: Colors.white38,
                             fontSize: 30,
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.w500,
                             fontFamily: 'Roboto',
                           ),
                         ),
@@ -260,18 +321,8 @@ class _AiPageState extends State<AiPage> {
                                   vertical: 12,
                                 ),
                                 color: Colors.black,
-                                child: MarkdownBody(
-                                  data: msg['content'] ?? '',
-                                  styleSheet: MarkdownStyleSheet(
-                                    p: const TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 14,
-                                      height: 1.5,
-                                    ),
-                                    code: const TextStyle(
-                                      color: Colors.orangeAccent,
-                                    ),
-                                  ),
+                                child: _renderMixedMarkdownAndMath(
+                                  msg['content'] ?? '',
                                 ),
                               );
                             }
@@ -296,7 +347,7 @@ class _AiPageState extends State<AiPage> {
                                 children: const [
                                   Text(
                                     'Typing🙇‍♂️',
-                                    style: TextStyle(color: Colors.white70),
+                                    style: TextStyle(color: Colors.white),
                                   ),
                                   SizedBox(width: 6),
                                   LoadingDots(),
@@ -438,7 +489,7 @@ class _LoadingDotsState extends State<LoadingDots>
       animation: _dotCount,
       builder: (_, __) => Text(
         '.' * _dotCount.value,
-        style: const TextStyle(color: Colors.white70),
+        style: const TextStyle(color: Colors.white),
       ),
     );
   }

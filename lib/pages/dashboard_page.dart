@@ -3,6 +3,7 @@ import '../database/transaction_db.dart';
 import '../models/transaction.dart' as model;
 import 'add_transaction_page.dart';
 import 'transaction_detail_page.dart';
+import 'package:intl/intl.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -16,6 +17,12 @@ class _DashboardPageState extends State<DashboardPage> {
   String _sortOption = 'Time Desc';
   bool _isMultiSelectMode = false;
   Set<int> _selectedIds = {};
+
+  final currencyFormatter = NumberFormat.currency(
+    locale: 'en_US',
+    symbol: '￥',
+    decimalDigits: 0,
+  );
 
   @override
   void initState() {
@@ -98,6 +105,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text(
           'Saldo',
           style: TextStyle(
@@ -135,14 +143,14 @@ class _DashboardPageState extends State<DashboardPage> {
               children: [
                 _statCard(
                   'TOTAL INCOME',
-                  '+￥${totalIncome.toStringAsFixed(0)}',
+                  '+${currencyFormatter.format(totalIncome)}',
                   Colors.green,
                   Icons.arrow_upward,
                 ),
                 const SizedBox(width: 12),
                 _statCard(
                   'TOTAL EXPENSE',
-                  '-￥${totalExpense.toStringAsFixed(0)}',
+                  '-${currencyFormatter.format(totalExpense)}',
                   Colors.red,
                   Icons.arrow_downward,
                 ),
@@ -387,7 +395,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            '￥${balance.toStringAsFixed(0)}',
+            currencyFormatter.format(balance),
             style: const TextStyle(
               fontSize: 28,
               color: Colors.white,

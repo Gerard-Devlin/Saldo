@@ -22,7 +22,7 @@ class Transaction {
       amount: map['amount'],
       date: DateTime.parse(map['date']),
       type: map['type'],
-      account: map['tag'],
+      account: map['account'],
     );
   }
 
@@ -33,7 +33,7 @@ class Transaction {
       'amount': amount,
       'date': date.toIso8601String(),
       'type': type,
-      'tag': account,
+      'account': account,
     };
   }
 
@@ -43,8 +43,7 @@ class Transaction {
     double? amount,
     DateTime? date,
     String? type,
-    String? tag,
-    String? note,
+    String? account,
   }) {
     return Transaction(
       id: id ?? this.id,
@@ -52,7 +51,7 @@ class Transaction {
       amount: amount ?? this.amount,
       date: date ?? this.date,
       type: type ?? this.type,
-      account: tag ?? this.account,
+      account: account ?? this.account,
     );
   }
 }
