@@ -64,9 +64,9 @@ class _DetailPageState extends State<DetailPage> {
   Map<int, double> get dailyExpenses {
     final map = <int, double>{};
     for (final t in _transactions) {
-      if (_inSelectedMonth(t.date) && t.amount < 0) {
+      if (_inSelectedMonth(t.date)) {
         final day = t.date.day;
-        map[day] = (map[day] ?? 0) + t.amount.abs();
+        map[day] = (map[day] ?? 0) + t.amount;
       }
     }
     return map;
@@ -252,6 +252,13 @@ class _DetailPageState extends State<DetailPage> {
     int firstWeekday,
     double maxExpense,
   ) {
+    final maxAmount = dailyExpenses.values.isEmpty
+        ? 1.0
+        : dailyExpenses.values.map((e) => e.abs()).reduce(max);
+    final minAmount = dailyExpenses.values.isEmpty
+        ? 0.0
+        : dailyExpenses.values.map((e) => e.abs()).reduce(min);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -265,7 +272,6 @@ class _DetailPageState extends State<DetailPage> {
             '📅  Monthly Overview',
             style: TextStyle(color: Colors.white70),
           ),
-
           const SizedBox(height: 8),
           GridView.builder(
             shrinkWrap: true,
@@ -273,29 +279,44 @@ class _DetailPageState extends State<DetailPage> {
             itemCount: daysInMonth + (firstWeekday - 1),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 7,
-              crossAxisSpacing: 4,
-              mainAxisSpacing: 4,
+              crossAxisSpacing: 6,
+              mainAxisSpacing: 6,
             ),
             itemBuilder: (context, index) {
               if (index < firstWeekday - 1) return const SizedBox();
 
               final day = index - (firstWeekday - 1) + 1;
               final amount = dailyExpenses[day] ?? 0;
+              final isIncome = amount >= 0;
 
-              final color = _colorForAmount(amount);
+              final color = _colorForAmount(amount, maxAmount, minAmount);
 
               return Container(
                 decoration: BoxDecoration(
                   color: color,
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 alignment: Alignment.center,
-                child: Text(
-                  '$day',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: amount > 0 ? Colors.white : Colors.grey,
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '$day',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: amount != 0 ? Colors.white : Colors.grey,
+                      ),
+                    ),
+                    if (amount != 0)
+                      Text(
+                        '¥${amount.abs().toStringAsFixed(0)}',
+                        style: TextStyle(
+                          fontSize: 8,
+                          color: Colors.white.withOpacity(0.8),
+                        ),
+                      ),
+                  ],
                 ),
               );
             },
@@ -445,22 +466,31 @@ class _DetailPageState extends State<DetailPage> {
   }
 }
 
-Color _colorForAmount(double amount) {
-  if (amount <= 0) return Colors.grey[850]!;
+Color _colorForAmount(double amount, double maxAmount, double minAmount) {
+  if (amount == 0) return Colors.grey[850]!;
 
-  if (amount <= 500) {
-    final t = amount / 500;
-    return Color.lerp(Colors.green[100], Colors.green[300], t)!;
-  } else if (amount <= 2000) {
-    final t = (amount - 500) / 1500;
-    return Color.lerp(Colors.green[300], Colors.green[500], t)!;
-  } else if (amount <= 5000) {
-    final t = (amount - 2000) / 3000;
-    return Color.lerp(Colors.green[500], Colors.green[700], t)!;
-  } else if (amount <= 10000) {
-    final t = (amount - 5000) / 5000;
-    return Color.lerp(Colors.green[700], Colors.green[900], t)!;
+  final isIncome = amount > 0;
+  final normalizedAmount = (amount.abs() - minAmount) / (maxAmount - minAmount);
+  
+  if (isIncome) {
+    if (normalizedAmount <= 0.25) {
+      return Color.lerp(Colors.green[100], Colors.green[300], normalizedAmount * 4)!;
+    } else if (normalizedAmount <= 0.5) {
+      return Color.lerp(Colors.green[300], Colors.green[500], (normalizedAmount - 0.25) * 4)!;
+    } else if (normalizedAmount <= 0.75) {
+      return Color.lerp(Colors.green[500], Colors.green[700], (normalizedAmount - 0.5) * 4)!;
+    } else {
+      return Color.lerp(Colors.green[700], Colors.green[900], (normalizedAmount - 0.75) * 4)!;
+    }
   } else {
-    return Colors.green[900]!;
+    if (normalizedAmount <= 0.25) {
+      return Color.lerp(Colors.red[100], Colors.red[300], normalizedAmount * 4)!;
+    } else if (normalizedAmount <= 0.5) {
+      return Color.lerp(Colors.red[300], Colors.red[500], (normalizedAmount - 0.25) * 4)!;
+    } else if (normalizedAmount <= 0.75) {
+      return Color.lerp(Colors.red[500], Colors.red[700], (normalizedAmount - 0.5) * 4)!;
+    } else {
+      return Color.lerp(Colors.red[700], Colors.red[900], (normalizedAmount - 0.75) * 4)!;
+    }
   }
 }
