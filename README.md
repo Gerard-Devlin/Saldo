@@ -55,7 +55,7 @@ through encrypted API requests.
 ### Clone and Run Locally
 
 ```bash
-git clone https://github.com/your_username/saldo.git
+git clone https://github.com/Gerard-Devlin/Saldo.git
 cd saldo
 flutter pub get
 flutter run
