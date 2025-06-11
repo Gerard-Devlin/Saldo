@@ -69,13 +69,19 @@ flutter build apk --release
 dependencies:
   flutter:
     sdk: flutter
-  sqflite: ^2.3.0
-  path_provider: ^2.0.14
-  intl: ^0.18.1
-  google_fonts: ^6.1.0
 
-dev_dependencies:
+  intl: ^0.18.1
+  sqflite: ^2.3.0
+  flutter_math_fork: ^0.7.4
+  speech_to_text: ^7.0.0
+  path: ^1.9.0
+  percent_indicator: ^4.2.2
   flutter_launcher_icons: ^0.13.1
+  http: ^0.13.6
+  fl_chart: ^0.64.0
+  font_awesome_flutter: ^10.7.0
+  flutter_markdown: ^0.6.18
+  shared_preferences: ^2.2.2
 ```
 
 ------
