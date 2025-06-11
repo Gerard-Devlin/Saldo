@@ -6,6 +6,8 @@ import '../models/transaction.dart' as model;
 import '../database/transaction_db.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'alipay_detail_page.dart';
+import 'wechat_detail_page.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage({super.key});
@@ -94,6 +96,7 @@ class _DetailPageState extends State<DetailPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        elevation: 0,
         scrolledUnderElevation: 0,
         title: const Padding(
           padding: EdgeInsets.only(left: 10, top: 15),
@@ -109,7 +112,6 @@ class _DetailPageState extends State<DetailPage> {
           ),
         ),
         backgroundColor: Colors.black,
-        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -207,40 +209,59 @@ class _DetailPageState extends State<DetailPage> {
 
   Widget _buildAccountCard(String label, double value, IconData icon) {
     return Expanded(
-      child: AspectRatio(
-        aspectRatio: 1.0,
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.grey[900],
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 40,
-                color: label == 'WeChat'
-                    ? const Color(0xFF07C160)
-                    : const Color(0xFF1677FF),
+      child: GestureDetector(
+        onTap: () {
+          if (label == 'Alipay') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AlipayDetailPage(),
               ),
-              const SizedBox(height: 8),
-              Text(
-                '$label',
-                style: const TextStyle(color: Colors.white54, fontSize: 13),
-                textAlign: TextAlign.center,
+            );
+          } else if (label == 'WeChat') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const WechatDetailPage(),
               ),
-              const SizedBox(height: 8),
-              Text(
-                '¥${value.toStringAsFixed(0)}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+            );
+          }
+        },
+        child: AspectRatio(
+          aspectRatio: 1.0,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[900],
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  size: 40,
+                  color: label == 'WeChat'
+                      ? const Color(0xFF07C160)
+                      : const Color(0xFF1677FF),
                 ),
-              ),
-            ],
+                const SizedBox(height: 8),
+                Text(
+                  '$label',
+                  style: const TextStyle(color: Colors.white54, fontSize: 13),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '¥${value.toStringAsFixed(0)}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -63,7 +63,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         await TransactionDB.instance.update(t);
       }
 
-      if (context.mounted) Navigator.pop(context);
+      if (context.mounted) Navigator.pop(context, true);
     }
   }
 
@@ -100,7 +100,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
     if (confirm == true) {
       await TransactionDB.instance.delete(widget.transaction!.id!);
-      if (context.mounted) Navigator.pop(context);
+      if (context.mounted) Navigator.pop(context, true);
     }
   }
 

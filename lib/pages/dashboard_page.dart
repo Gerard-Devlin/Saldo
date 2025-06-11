@@ -206,7 +206,13 @@ class _DashboardPageState extends State<DashboardPage> {
           : FloatingActionButton(
               backgroundColor: Colors.blueAccent,
               child: const Icon(Icons.add),
-              onPressed: _navigateToAddTransaction,
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AddTransactionPage()),
+                );
+                _loadTransactions();
+              },
             ),
     );
   }
@@ -288,7 +294,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   MaterialPageRoute(
                     builder: (_) => TransactionDetailPage(transaction: t),
                   ),
-                );
+                ).then((_) => _loadTransactions());
               }
             },
             child: Container(

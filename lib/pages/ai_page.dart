@@ -474,6 +474,7 @@ class _AiPageState extends State<AiPage> {
       backgroundColor: Colors.black,
 
       appBar: AppBar(
+        elevation: 0,
         scrolledUnderElevation: 0,
         title: const Padding(
           padding: EdgeInsets.only(left: 10, top: 15),
