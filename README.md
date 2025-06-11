@@ -3,9 +3,11 @@
 **Personal Finance + AI Assistant.**
 *Track your money, get insights from AI.*
 
-| ![Main Page](https://github.com/user-attachments/assets/346deabf-b4ec-42f0-b676-da5e1dc04bfa) | ![Detail Page](https://github.com/user-attachments/assets/2b773f5c-67cb-45b8-a9e5-2f4956ef35a3) | ![AI Page](https://github.com/user-attachments/assets/e4a7a5db-46a6-4dd5-8144-9a9ea81aefb0) |
-|:-----------------------------------------------------------:|:------------------------------------------------------------:|:------------------------------------------------------------:|
-| Main Page                                                   | Detail Page                                                  | AI Page                                                      |
+| ![Main Page](https://github.com/user-attachments/assets/ffbcae7e-9caf-46fa-ba6c-899bff59177c) | ![Detail Page](https://github.com/user-attachments/assets/e01f07f3-315e-47b0-a7e0-20375e66d581) | ![Detail Page 2](https://github.com/user-attachments/assets/38a16014-5ed4-4049-86db-07b1f0109fa3) | ![AI Page](https://github.com/user-attachments/assets/c3d1e673-6fda-43ac-a894-b38aead803eb) |
+|:---------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------:|
+| Main Page                                                                                     | Detail Page                                                                                    | Detail Page 2                                                                                   | AI Page                                                                                     |
+
+
 
 
 ------
