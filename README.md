@@ -3,14 +3,23 @@
 **Personal Finance + AI Assistant.**
 *Track your money, get insights from AI.*
 
-| ![Main Page](https://github.com/user-attachments/assets/ffbcae7e-9caf-46fa-ba6c-899bff59177c) | ![Detail Page](https://github.com/user-attachments/assets/e01f07f3-315e-47b0-a7e0-20375e66d581) | ![Detail Page 2](https://github.com/user-attachments/assets/38a16014-5ed4-4049-86db-07b1f0109fa3) | ![AI Page](https://github.com/user-attachments/assets/c3d1e673-6fda-43ac-a894-b38aead803eb) |
-|:---------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------:|
-| Main Page                                                                                     | Detail Page                                                                                    | Detail Page 2                                                                                   | AI Page                                                                                     |
 
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f9ee256a-5288-4277-a593-c93092f2ac6f" width="120"/>
+  <img src="https://github.com/user-attachments/assets/a7511768-f53c-4dfc-bc11-288233597589" width="120"/>
+  <img src="https://github.com/user-attachments/assets/00d4bcc8-314c-48d4-ab21-7928f1379c5b" width="120"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/c90f1961-8c06-4c03-ba85-889c735cbcae" width="120"/>
+  <img src="https://github.com/user-attachments/assets/2760b58c-7bbb-46de-afba-3f6d8ba438f9" width="120"/>
+  <img src="https://github.com/user-attachments/assets/94bc99e4-6285-4440-a805-4535c9691f09" width="120"/>
+</p>
 
 
 ------
+
 
 ## ✨ Features
 
